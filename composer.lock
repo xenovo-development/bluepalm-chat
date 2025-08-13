@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c9317c5cbcb195f1929b52868a75c810",
+    "content-hash": "cb2d8c000e313e6095df192c2c91070e",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -612,6 +612,61 @@
                 }
             ],
             "time": "2025-03-06T22:45:56+00:00"
+        },
+        {
+            "name": "emincmg/convo-lite",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Emincmg/convo-lite.git",
+                "reference": "ffae73caffe22e844c9b24ca76f1bde8d9f29579"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Emincmg/convo-lite/zipball/ffae73caffe22e844c9b24ca76f1bde8d9f29579",
+                "reference": "ffae73caffe22e844c9b24ca76f1bde8d9f29579",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "nunomaduro/collision": "^7.8"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Convo": "Emincmg\\ConvoLite\\Facades\\Convo"
+                    },
+                    "providers": [
+                        "Emincmg\\ConvoLite\\Providers\\ConversationServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Emincmg\\ConvoLite\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Emin Çomoğlu",
+                    "email": "emin-comoglu@hotmail.com",
+                    "homepage": "https://emincomoglu.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A lightweight conversation package for Laravel projects, facilitating smooth chat experiences.",
+            "support": {
+                "issues": "https://github.com/Emincmg/convo-lite/issues",
+                "source": "https://github.com/Emincmg/convo-lite/tree/v1.0.0"
+            },
+            "time": "2024-11-22T05:56:32+00:00"
         },
         {
             "name": "fruitcake/php-cors",
@@ -8838,12 +8893,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }

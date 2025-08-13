@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Chat;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Conversation\StoreConversationRequest;
+use App\Http\Requests\Conversation\UpdateConversationRequest;
 
 class ConversationController extends Controller
 {
@@ -26,7 +26,7 @@ class ConversationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreConversationRequest $request)
     {
         //
     }
@@ -50,7 +50,7 @@ class ConversationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateConversationRequest $request, string $id)
     {
         //
     }

@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-class ConversationService
+class MessageService
 {
     public function view()
     {
