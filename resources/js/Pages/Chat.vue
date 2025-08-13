@@ -6,6 +6,20 @@
                 <input v-model="query" type="text" placeholder="Search" @keydown.stop />
             </div>
 
+            <!-- SEKME BUTONLARI -->
+            <div class="filter-tabs">
+                <button class="tab-btn" :class="{ active: currentTab === 'inbox' }" @click="currentTab = 'inbox'">
+                    <font-awesome-icon :icon="['fas', 'inbox']" class="att-icon" /> Messages
+                </button>
+                <button class="tab-btn" :class="{ active: currentTab === 'archive' }" @click="currentTab = 'archive'">
+                    <font-awesome-icon :icon="['fas', 'box-archive']" class="att-icon" /> Archive
+                </button>
+            </div>
+
+
+
+
+
             <ul class="chat-list">
                 <li v-for="chat in filteredChats" :key="chat.id" class="chat-item"
                     :class="{ active: activeChat && activeChat.id === chat.id }" @click="openChat(chat)">
@@ -118,6 +132,7 @@ export default {
         return {
             isNarrow: false,
             query: "",
+            currentTab: 'inbox',       // 'inbox' | 'archive'
             draft: "",
             attachments: [],               // [{file, name, size, type, previewUrl}]
             maxFileSize: 25 * 1024 * 1024, // 25 MB
@@ -130,6 +145,7 @@ export default {
                     lastMessageAt: new Date().setHours(10, 5),
                     unreadCount: 0,
                     typing: false,
+                    archived: false,
                     messages: [
                         { id: "m1", from: "ethan", text: "Hey, how's it going?", at: new Date().setHours(10, 5) },
                         { id: "m2", from: "me", text: "I'm doing well, thanks! How about you?", at: new Date().setHours(10, 6) },
@@ -146,6 +162,7 @@ export default {
                     lastMessageAt: new Date().setHours(9, 30),
                     unreadCount: 2,
                     typing: true,
+                    archived: true,   // örnek arşivli
                     messages: [
                         { id: "s1", from: "sophia", text: "Meeting at 10?", at: new Date().setHours(9, 20) },
                         { id: "s2", from: "me", text: "Works for me.", at: new Date().setHours(9, 22) },
@@ -159,6 +176,7 @@ export default {
                     lastMessageAt: new Date().setHours(8, 15),
                     unreadCount: 0,
                     typing: false,
+                    archived: false,
                     messages: [{ id: "l1", from: "liam", text: "Lunch later?", at: new Date().setHours(8, 15) }],
                 },
             ],
@@ -169,11 +187,14 @@ export default {
     computed: {
         filteredChats() {
             const q = this.query.trim().toLowerCase();
+            const wantArchived = this.currentTab === 'archive';
             return this.chats
-                .filter(
-                    (c) =>
+                .filter(c =>
+                    c.archived === wantArchived &&
+                    (
                         c.name.toLowerCase().includes(q) ||
                         (c.lastMessage && c.lastMessage.toLowerCase().includes(q))
+                    )
                 )
                 .sort((a, b) => b.lastMessageAt - a.lastMessageAt);
         },
@@ -192,7 +213,10 @@ export default {
         },
     },
     mounted() {
-        this.activeChat = this.chats[0] || null;
+        // aktif sohbeti mevcut sekmeye göre ata
+        const first = this.chats.find(c => !c.archived) || this.chats[0];
+        this.activeChat = first || null;
+
         this.onResize();
         window.addEventListener("resize", this.onResize);
         this.$nextTick(this.scrollToBottom);
@@ -384,6 +408,55 @@ export default {
     background: #f8fafc;
 }
 
+/* Sekmeler */
+.filter-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Sekme ikonları: default (pasif) renk metinle aynı */
+.filter-tabs .att-icon {
+    margin-right: 6px;
+    font-size: 14px;
+    color: #475569;
+    /* pasif: yazı rengiyle aynı */
+    transition: color .15s ease;
+}
+
+/* Aktif sekmede arka plan mavi olduğu için ikon beyaz */
+.filter-tabs .tab-btn.active .att-icon {
+    color: #fff;
+}
+
+/* Hover'da hafif koyulaşsın (pasif sekme için) */
+.filter-tabs .tab-btn:not(.active):hover .att-icon {
+    color: #334155;
+}
+
+.tab-btn {
+    flex: 1;
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #fff;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    color: #475569;
+}
+
+.tab-btn.active {
+    background: #1e72e8;
+    color: #fff;
+    border-color: var(--active);
+}
+
+.tab-btn:not(.active):hover {
+    border-color: #94a3b8;
+}
+
 .chat-list {
     list-style: none;
     margin: 0;
@@ -544,7 +617,6 @@ export default {
     overflow-y: auto;
     padding: 24px 24px 12px;
     background: linear-gradient(to bottom, #f7f8fb 0%, #f1f4f9 60%, #ffffff 100%);
-
 }
 
 .message-row {
@@ -616,7 +688,7 @@ export default {
 
 .att-icon {
     font-size: 18px;
-    color: #374151;
+    color: white;
 }
 
 .att-meta {
@@ -689,10 +761,9 @@ export default {
 .composer {
     position: relative;
     border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr auto;
     gap: 10px;
-    padding-left: 0px !important;
     padding: 8px;
 }
 
@@ -707,10 +778,8 @@ export default {
     outline: none;
     background: #f9fafb;
     font-family: inherit;
-    margin-bottom: 10px;
 }
 
-/* Actions */
 .actions {
     display: flex;
     gap: 6px;
@@ -737,7 +806,6 @@ export default {
 .attach-list {
     position: absolute;
     bottom: -40px;
-    /* composer'ın altına sarkar */
     left: 8px;
     display: flex;
     flex-wrap: wrap;
