@@ -15,5 +15,5 @@ Route::get('/', function () {
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',])->group(function () {
     Route::get('/dashboard', function () {return Inertia::render('Dashboard');})->name('dashboard');
-    Route::get('/chat', function () {return Inertia::render('Chat');})->name('chat');
+    Route::get('/chat', [\App\Http\Controllers\ConversationController::class,'index'])->name('chat');
 });

@@ -4,15 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Conversation\StoreConversationRequest;
 use App\Http\Requests\Conversation\UpdateConversationRequest;
+use Illuminate\Support\Facades\Request;
+use Inertia\Inertia;
 
 class ConversationController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $conversations = $request->user()->conversations;
+        $conversations->load('messages');
+
+        return Inertia::render('Chat', ['conversations' => $conversations]);
     }
 
     /**
