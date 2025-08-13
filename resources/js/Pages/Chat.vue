@@ -68,18 +68,24 @@
                         <!-- Mesaj içi ekler -->
                         <div v-if="m.attachments && m.attachments.length" class="att-list">
                             <div v-for="(a, idx) in m.attachments" :key="idx" class="att-item">
-                                <!-- Görsel ise thumbnail -->
-                                <img v-if="a.previewUrl" :src="a.previewUrl" :alt="a.name" class="att-thumb" />
-                                <!-- Görsel değilse dosya kutusu -->
-                                <div v-else class="att-file" :title="`${a.name} • ${prettySize(a.size)}`">
+                                <!-- Görsel ise thumbnail (indir) -->
+                                <a v-if="a.previewUrl" :href="a.url || a.previewUrl" :download="a.name"
+                                    class="att-thumb-link">
+                                    <img :src="a.previewUrl" :alt="a.name" class="att-thumb" />
+                                </a>
+
+                                <!-- Görsel değilse dosya kutusu (indir) -->
+                                <a v-else class="att-file" :href="a.url" :download="a.name"
+                                    :title="`${a.name} • ${prettySize(a.size)}`">
                                     <font-awesome-icon :icon="iconFor(a.type, a.name)" class="att-icon" />
                                     <div class="att-meta">
                                         <div class="att-name">{{ a.name }}</div>
                                         <div class="att-size">{{ prettySize(a.size) }}</div>
                                     </div>
-                                </div>
+                                </a>
                             </div>
                         </div>
+
 
                         <div class="stamp">{{ formatTime(m.at) }}</div>
                     </div>
@@ -262,19 +268,24 @@ export default {
             this.attachments.splice(index, 1);
         },
 
-        // Gönder
         send() {
             const text = this.draft.trim();
             if (!text && this.attachments.length === 0) return;
             if (!this.activeChat) return;
 
             const now = Date.now();
-            const atts = this.attachments.map(a => ({
-                name: a.name,
-                size: a.size,
-                type: a.type,
-                previewUrl: a.previewUrl,
-            }));
+
+            // Tüm ekler için indirme URL'i (blob) oluştur
+            const atts = this.attachments.map(a => {
+                const downloadUrl = a.previewUrl || URL.createObjectURL(a.file); // tüm türlerde var
+                return {
+                    name: a.name,
+                    size: a.size,
+                    type: a.type,
+                    previewUrl: a.previewUrl || null, // görseller için thumbnail
+                    url: downloadUrl                     // indirme için
+                };
+            });
 
             this.activeChat.messages.push({
                 id: this.randId(),
@@ -289,7 +300,7 @@ export default {
             this.draft = "";
             this.attachments = [];
 
-            // Demo: sahte cevap
+            // demo cevap...
             if (this.fakeReplyTimer) clearTimeout(this.fakeReplyTimer);
             this.fakeReplyTimer = setTimeout(() => {
                 if (!this.activeChat) return;
@@ -677,6 +688,30 @@ export default {
     height: 100px;
     object-fit: cover;
 }
+
+/* Thumbnail linki default underline olmasın */
+.att-thumb-link {
+    display: block;
+}
+
+/* Dosya kutusu artık <a> olduğu için link görünümünü iptal et */
+.att-file {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    min-width: 160px;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    border-radius: 10px;
+}
+
+.att-file:hover {
+    background: #f8fafc;
+}
+
 
 .att-file {
     display: flex;
