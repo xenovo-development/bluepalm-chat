@@ -7,12 +7,19 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { ZiggyVue } from '../../vendor/tightenco/ziggy'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faPaperclip, faPaperPlane, faFile, faFileImage, faFileVideo, faFilePdf, faFileWord, faFileExcel, faFileZipper} from '@fortawesome/free-solid-svg-icons'
+import { 
+  faPaperclip, faPaperPlane, faFile, faFileImage, faFileVideo, faFilePdf, faFileWord, faFileExcel, faFileZipper,
+  faInbox, faBoxArchive // <-- BURADA EKLENDİ
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel'
 
-library.add(faPaperclip, faPaperPlane, faFile, faFileImage, faFileVideo, faFilePdf, faFileWord, faFileExcel, faFileZipper)
+// Buraya ekledik
+library.add(
+  faPaperclip, faPaperPlane, faFile, faFileImage, faFileVideo, faFilePdf, faFileWord, faFileExcel, faFileZipper,
+  faInbox, faBoxArchive
+)
 
 createInertiaApp({
   title: (title) => `${title} - ${appName}`,

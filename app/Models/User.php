@@ -2,25 +2,19 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Emincmg\ConvoLite\Traits\Relationships\HasConversations;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Fortify\TwoFactorAuthenticatable;
-use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens;
+    use HasApiTokens, Notifiable;
 
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory;
-    use HasProfilePhoto;
-    use Notifiable;
-    use TwoFactorAuthenticatable;
-    use HasConversations;
+    protected $guarded = [];
 
     /**
      * The attributes that are mass assignable.
@@ -28,9 +22,16 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'username',
+        'last_name',
         'email',
         'password',
+        'role',
+        'phone',
+        'passport',
+        'approved_at',
+        'investment'
     ];
 
     /**
@@ -41,29 +42,75 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'two_factor_recovery_codes',
-        'two_factor_secret',
     ];
 
     /**
-     * The accessors to append to the model's array form.
+     * The attributes that should be cast.
      *
-     * @var array<int, string>
+     * @var array<string, string>
      */
-    protected $appends = [
-        'profile_photo_url',
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    public function conversations(): BelongsToMany
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->belongsToMany(Conversation::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    public function marketplaceEntities(): BelongsToMany
+    {
+        return $this->belongsToMany(MarketplaceEntity::class);
+    }
+
+    public function marketplaceDeals(): BelongsToMany
+    {
+        return $this->belongsToMany(MarketplaceDeal::class);
+    }
+
+
+    public function masterdata(): HasOne
+    {
+        return $this->hasOne(Masterdata::class);
+    }
+
+    public function subscriptions(): HasOne
+    {
+        return $this->hasOne(Subscriptions::class);
+    }
+
+    public function files()
+    {
+        return $this->hasMany(UserFile::class);
+    }
+    public function loyaltybonus()
+    {
+        return $this->hasOne(LoyaltyBonus::class);
+    }
+
+    public function shareholderData()
+    {
+        return $this->hasOne(ShareholderData::class);
+    }
+
+    public function swaps()
+    {
+        return $this->hasMany(Swap::class);
+    }
+
+    public function affiliateLink()
+    {
+        return $this->hasOne(AffiliateLink::class,'owner_id');
+    }
+
+    public function affiliateLinksUsed()
+    {
+        return $this->belongsToMany(AffiliateLink::class, 'affiliate_link_user');
     }
 }
