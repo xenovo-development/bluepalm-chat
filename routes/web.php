@@ -1,27 +1,15 @@
 <?php
 
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\ConversationController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+Route::middleware(['auth', config('jetstream.auth_session'),])->group(function () {
+    Route::get('/', [ConversationController::class,'index'])->name('dashboard');
 });
 
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
-    Route::get('/chat', function () {
-        return Inertia::render('Chat');
-    })->name('chat');
+Route::get('/whoami', function () {
+    return [
+        'check' => \Illuminate\Support\Facades\Auth::check(),
+        'user'  => optional(auth()->user())->only(['id','name','email']),
+    ];
 });

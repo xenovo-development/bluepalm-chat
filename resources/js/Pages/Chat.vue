@@ -114,12 +114,18 @@
 <script>
 export default {
     name: "ChatPage",
+    props: {
+        conversations: {
+            type: Array,
+            required: true
+        }
+    },
     data() {
         return {
             isNarrow: false,
             query: "",
             draft: "",
-            attachments: [],               // [{file, name, size, type, previewUrl}]
+            attachments: [], // [{file, name, size, type, previewUrl}]
             maxFileSize: 25 * 1024 * 1024, // 25 MB
             chats: [
                 {
@@ -196,6 +202,7 @@ export default {
         this.onResize();
         window.addEventListener("resize", this.onResize);
         this.$nextTick(this.scrollToBottom);
+        console.log(this.conversations)
     },
     beforeUnmount() {
         window.removeEventListener("resize", this.onResize);
