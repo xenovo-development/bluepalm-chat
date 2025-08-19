@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Emincmg\ConvoLite\Traits\Relationships\HasConversations;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,7 +13,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, Notifiable, HasConversations;
 
     protected $guarded = [];
 

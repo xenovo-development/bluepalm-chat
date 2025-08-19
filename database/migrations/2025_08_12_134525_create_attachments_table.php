@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('attachments', function (Blueprint $table) {
+        Schema::create('convo_attachments', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->string('name')->nullable();

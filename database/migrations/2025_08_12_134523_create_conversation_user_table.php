@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('conversation_user', function (Blueprint $table) {
+        Schema::create('convo_conversation_user', function (Blueprint $table) {
             $table->unsignedBigInteger('conversation_id');
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
